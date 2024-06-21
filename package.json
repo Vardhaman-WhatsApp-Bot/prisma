@@ -1,0 +1,30 @@
+{
+  "name": "@vardhaman-whatsapp-bot/prisma",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "npx prisma generate",
+    "generate": "npx prisma generate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vardhaman-WhatsApp-Bot/prisma.git"
+  },
+  "author": "kairavsheth",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/Vardhaman-WhatsApp-Bot/prisma/issues"
+  },
+  "homepage": "https://github.com/Vardhaman-WhatsApp-Bot/prisma#readme",
+  "devDependencies": {
+    "@prisma/client": "^5.15.1",
+    "prisma": "^5.15.1"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "peerDependencies": {
+    "@prisma/client": ">=5"
+  }
+}

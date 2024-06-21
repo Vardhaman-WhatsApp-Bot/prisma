@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id                       String                     @id @default(cuid())
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+  name                     String
+  whatsappBusinessNumber   String
+  whatsappBusinessApiToken String
+  users                    User[]
+  NotificationSubscription NotificationSubscription[]
+  Tag                      Tag[]
+  Product                  Product[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  email     String   @unique
+  name      String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId  String
+}
+
+model NotificationSubscription {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  endpoint  String
+  p256dh    String
+  auth      String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId  String
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  category  Category
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId  String
+  Product   Product? @relation(fields: [productId], references: [id])
+  productId String?
+}
+
+enum Category {
+  COLOR
+  AGE
+  SIZE
+  TYPE
+}
+
+model Product {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  display   Boolean
+  name      String
+  price     Float
+  size      String
+  packOf    Int
+  tags      Tag[]
+  Image     Image[]
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  tenantId  String
+}
+
+model Image {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  url       String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+}
