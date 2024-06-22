@@ -14,16 +14,17 @@ datasource db {
 }
 
 model Tenant {
-  id                       String                     @id @default(cuid())
-  createdAt                DateTime                   @default(now())
-  updatedAt                DateTime                   @updatedAt
-  name                     String
-  whatsappBusinessNumber   String
-  whatsappBusinessApiToken String
-  users                    User[]
-  NotificationSubscription NotificationSubscription[]
-  Tag                      Tag[]
-  Product                  Product[]
+  id                        String                     @id @default(cuid())
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
+  name                      String
+  whatsappBusinessNumber    String
+  whatsappBusinessApiToken  String
+  users                     User[]
+  notificationSubscriptions NotificationSubscription[]
+  tags                      Tag[]
+  products                  Product[]
+  chats                     Chat[]
 }
 
 model User {
@@ -56,7 +57,7 @@ model Tag {
   aliases   String[]
   tenant    Tenant   @relation(fields: [tenantId], references: [id])
   tenantId  String
-  Product   Product? @relation(fields: [productId], references: [id])
+  products  Product? @relation(fields: [productId], references: [id])
   productId String?
 }
 
@@ -98,4 +99,100 @@ model Image {
   url       String
   product   Product  @relation(fields: [productId], references: [id])
   productId String
+}
+
+/// WhatsApp Business API Models
+
+model Chat {
+  id        String    @id @default(cuid())
+  savedName String?
+  party     Party?    @relation(fields: [partyId], references: [id])
+  partyId   String?
+  waName    String
+  phone     String
+  chatState ChatState
+  tenant    Tenant    @relation(fields: [tenantId], references: [id])
+  tenantId  String
+  messages  Message[]
+}
+
+model Party {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  address   String
+  chats     Chat[]
+}
+
+enum ChatState {
+  FILTER
+  CATALOG
+  OTHER
+}
+
+model Message {
+  id        String           @id @default(cuid())
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  chat      Chat             @relation(fields: [chatId], references: [id])
+  chatId    String
+  text      String?
+  type      MessageType
+  status    MessageStatus
+  direction MessageDirection
+  media     Media?
+  location  Location?
+  contact   Contact?
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  DOCUMENT
+  LOCATION
+  CONTACT
+  STICKER
+  AUDIO
+}
+
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+}
+
+enum MessageDirection {
+  INBOUND
+  OUTBOUND
+  BOT
+}
+
+model Media {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  url       String
+  message   Message  @relation(fields: [messageId], references: [id])
+  messageId String   @unique
+}
+
+model Location {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  latitude  Float
+  longitude Float
+  message   Message  @relation(fields: [messageId], references: [id])
+  messageId String   @unique
+}
+
+model Contact {
+  id        String    @id @default(cuid())
+  name      String
+  phone     String
+  chatState ChatState
+  message   Message   @relation(fields: [messageId], references: [id])
+  messageId String    @unique
 }
