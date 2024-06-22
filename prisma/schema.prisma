@@ -62,9 +62,18 @@ model Tag {
 
 enum Category {
   COLOR
+  GENDER
   AGE
   SIZE
   TYPE
+  MATERIAL
+  BRAND
+  STYLE
+  OCCASION
+  PATTERN
+  SLEEVE
+  NECK
+  MISC
 }
 
 model Product {
