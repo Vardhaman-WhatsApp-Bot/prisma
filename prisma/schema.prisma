@@ -87,7 +87,7 @@ model Product {
   size      String
   packOf    Int
   tags      Tag[]
-  Image     Image[]
+  images    Image[]
   tenant    Tenant   @relation(fields: [tenantId], references: [id])
   tenantId  String
 }
